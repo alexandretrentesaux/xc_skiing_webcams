@@ -24,6 +24,24 @@ WEBCAM_KNB_URL = [
     "http://webcam.itteleservice.de/webcams/nachtloipe-webcam/skicam2.jpg"
 ]
 
+WEBCAM_URLS = [
+    {
+        "url": "http://webcam.inforoute67.fr/WebcamFTP/CHAMP-DU-FEU/",
+        "label": "Champ du Feu",
+        "type": "index"
+    },
+    {
+        "url": [
+            "http://webcam.itteleservice.de/webcams/nachtloipe-webcam/skicam.jpg",
+            "http://webcam.itteleservice.de/webcams/nachtloipe-webcam/skihuette.jpg",
+            "http://webcam.itteleservice.de/webcams/nachtloipe-webcam/skicam2.jpg"
+        ],
+        "label": "Kniebis",
+        "type": "image"
+    }
+]
+
+
 HTML_INDEX = """
 <html>
   <body>
@@ -93,6 +111,20 @@ def cdf():
 def knb():
     # response.content_type = 'image/jpg'
     return template(WEBCAMS_TABLE, webcams=WEBCAM_KNB_URL)
+
+
+@api.route('/test')
+def test():
+    urls = []
+    for webcam in WEBCAM_URLS:
+        if webcam["type"] == 'index':
+            pic_list = get_url_paths(webcam['url'], ext='jpg')
+            urls.append(pic_list[len(pic_list) - 1])
+        if webcam['type'] == 'image':
+            for url in webcam['url']:
+                urls.append(url)
+    return template(WEBCAMS_TABLE, webcams=urls)
+
 
 
 def json_formatter(data, colorize=False, sort=True, comments=''):
